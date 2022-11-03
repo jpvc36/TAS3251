@@ -20,7 +20,7 @@
 			#size-cells = <0>;
 			status = "okay";
 
-			tas3251@4a {
+			codec: tas3251@4a {
 				#sound-dai-cells = <0>;
 				compatible = "ti,tas3251";
 				reg = <0x4a>;
@@ -40,8 +40,10 @@
 		iqaudio_dac: __overlay__ {
 			compatible = "iqaudio,iqaudio-dac";
 			i2s-controller = <&i2s>;
-			card_name = "AmpliMuseAmp2";
-			mute-gpios = <&gpio 22 0>;
+			card_name = "AmpliMuseAMP2";
+			dai_name = "AmpliMuse Amp2";
+			dai_stream_name = "AmpliMuse Amp2 HiFi";
+			mute-gpios = <&gpio 4 0>;
 			status = "okay";
 		};
 	};
@@ -50,5 +52,6 @@
 		24db_digital_gain = <&iqaudio_dac>,"iqaudio,24db_digital_gain?";
 		auto_mute_amp = <&iqaudio_dac>,"iqaudio-dac,auto-mute-amp?";
 		unmute_amp = <&iqaudio_dac>,"iqaudio-dac,unmute-amp?";
+		i2creg = <&codec>,"reg:<>";
 	};
 };
