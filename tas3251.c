@@ -617,12 +617,12 @@ static int tas3251_dai_startup(struct snd_pcm_substream *substream,
 	struct snd_soc_component *component = dai->component;
 	struct tas3251_priv *tas3251 = snd_soc_component_get_drvdata(component);
 
-	switch (tas3251->fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-	case SND_SOC_DAIFMT_CBM_CFM:
-	case SND_SOC_DAIFMT_CBM_CFS:
+	switch (tas3251->fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
+	case SND_SOC_DAIFMT_CBP_CFP:
+	case SND_SOC_DAIFMT_CBP_CFC:
 		return tas3251_dai_startup_master(substream, dai);
 
-	case SND_SOC_DAIFMT_CBS_CFS:
+	case SND_SOC_DAIFMT_CBC_CFC:
 		return tas3251_dai_startup_slave(substream, dai);
 
 	default:
@@ -1163,8 +1163,8 @@ static int tas3251_hw_params(struct snd_pcm_substream *substream,
 		return ret;
 	}
 
-	if ((tas3251->fmt & SND_SOC_DAIFMT_MASTER_MASK) ==
-	    SND_SOC_DAIFMT_CBS_CFS) {
+	if ((tas3251->fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) ==
+	    SND_SOC_DAIFMT_CBC_CF) {
 		ret = regmap_update_bits(tas3251->regmap, TAS3251_ERROR_DETECT,
 					 TAS3251_DCAS, 0);
 		if (ret != 0) {
@@ -1289,21 +1289,21 @@ static int tas3251_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 	int afmt;
 	int offset = 0;
 	int clock_output;
-	int master_mode;
+	int provider_mode;
 	int ret;
 
 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-	case SND_SOC_DAIFMT_CBS_CFS:
+	case SND_SOC_DAIFMT_CBC_CFC:
 		clock_output = 0;
-		master_mode = 0;
+		provider_mode = 0;
 		break;
-	case SND_SOC_DAIFMT_CBM_CFM:
+	case SND_SOC_DAIFMT_CBP_CFP:
 		clock_output = TAS3251_SCLKO | TAS3251_LRKO;
-		master_mode = TAS3251_RLRK | TAS3251_RSCLK;
+		provider_mode = TAS3251_RLRK | TAS3251_RSCLK;
 		break;
-	case SND_SOC_DAIFMT_CBM_CFS:
+	case SND_SOC_DAIFMT_CBP_CFC:
 		clock_output = TAS3251_SCLKO;
-		master_mode = TAS3251_RSCLK;
+		provider_mode = TAS3251_RSCLK;
 		break;
 	default:
 		return -EINVAL;
@@ -1319,9 +1319,9 @@ static int tas3251_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 
 	ret = regmap_update_bits(tas3251->regmap, TAS3251_MASTER_MODE,			// reg 12
 				 TAS3251_RLRK | TAS3251_RSCLK,
-				 master_mode);
+				 provider_mode);
 	if (ret != 0) {
-		dev_err(component->dev, "Failed to enable master mode: %d\n", ret);
+		dev_err(component->dev, "Failed to enable provider mode: %d\n", ret);
 		return ret;
 	}
 
@@ -1461,7 +1461,6 @@ static const struct snd_soc_component_driver tas3251_component_driver = {
 	.num_dapm_routes	= ARRAY_SIZE(tas3251_dapm_routes),
 	.use_pmdown_time	= 1,
 	.endianness		= 1,
-	.non_legacy_dai_naming	= 1,
 };
 
 static const struct regmap_range_cfg tas3251_range = {
