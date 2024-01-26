@@ -1164,7 +1164,7 @@ static int tas3251_hw_params(struct snd_pcm_substream *substream,
 	}
 
 	if ((tas3251->fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) ==
-	    SND_SOC_DAIFMT_CBC_CF) {
+	    SND_SOC_DAIFMT_CBC_CFC) {
 		ret = regmap_update_bits(tas3251->regmap, TAS3251_ERROR_DETECT,
 					 TAS3251_DCAS, 0);
 		if (ret != 0) {
