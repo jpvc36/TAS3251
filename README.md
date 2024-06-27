@@ -1,0 +1,1 @@
+Linux (6.x) driver for the TAS3251. Takes dedicated firmware from "/lib/firmware/tas3251/tas3251_<firmware>_<samplerate>.bin". Generate firmware from TI's PPC3 with hex.c. HD version with separate clock generator with SI5351a also provided.
