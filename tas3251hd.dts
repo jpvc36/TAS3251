@@ -1,0 +1,66 @@
+// Definitions for HiFiBerry DAC+ HD
+// dtc -I dts -O dtb -o /boot/overlays/tas3251hd.dtbo tas3251hd.dts
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target = <&i2s_clk_consumer>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			codec: tas3251@4a {
+				compatible = "ti,tas3251";
+				#sound-dai-cells = <0>;
+				#clock-cells = <0>;
+				reg = <0x4a>;
+				firmware = "default";
+//				AVDD-supply = <&vdd_3v3_reg>;
+//				DVDD-supply = <&vdd_3v3_reg>;
+//				CPVDD-supply = <&vdd_3v3_reg>;
+//				GVDD-supply = <&vdd_5v0_reg>;
+//				PVDD-supply = <&vdd_5v0_reg>;
+//				pdn-gpios = <&gpio 17 0>;
+//				mute-gpios = <&gpio 15 0>;
+				status = "okay";
+			};
+			pll: pll@60 {
+				compatible = "ti,tas3251hd-clk";
+				#clock-cells = <0>;
+				reg = <0x60>;
+				clkout = <0>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <&sound>;
+		__overlay__ {
+			compatible = "ti,snd-tas3251hd";
+			i2s-controller = <&i2s_clk_consumer>;
+			clocks = <&pll 0>;
+			reset-gpio = <&gpio 15 0>;
+			status = "okay";
+//			firmwares ="fw0, fw1, fw2, fw3, fw4,";
+		};
+	};
+
+	__overrides__ {
+		firmware = <&codec>,"firmware";
+		i2creg = <&codec>,"reg:<>";
+		clkout = <&pll>,"clkout:<>";
+        pllreg = <&pll>,"reg:<>";
+	};
+};
