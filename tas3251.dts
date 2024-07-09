@@ -26,7 +26,7 @@
 //				compatible = "ti,pcm5122";
 				reg = <0x4a>;
 				firmware = "default";
-/				AVDD-supply = <&vdd_3v3_reg>;
+				AVDD-supply = <&vdd_3v3_reg>;
 				DVDD-supply = <&vdd_3v3_reg>;
 				CPVDD-supply = <&vdd_3v3_reg>;
 				GVDD-supply = <&vdd_5v0_reg>;
