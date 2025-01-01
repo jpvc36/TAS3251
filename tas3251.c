@@ -489,7 +489,7 @@ static struct i2c_driver tas3251_i2c_driver = {
 		.of_match_table = of_match_ptr(tas3251_of_match),
 	},
 	.id_table	= tas3251_i2c_ids,
-	.probe_new	= tas3251_i2c_probe,
+	.probe		= tas3251_i2c_probe,
 };
 
 module_i2c_driver(tas3251_i2c_driver);
